@@ -1,0 +1,27 @@
+# Workflow to print OIDC token claims
+name: Print OIDC token claims
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+
+jobs:
+  print-oidc-token:
+    runs-on: ubuntu-latest
+    environment: testing
+    steps:
+         
+    # print oidc token claims
+    - name: print oidc token claims
+      run: |
+          IDTOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" -H "Accept: application/json; api-version=2.0" -H "Content-Type: application/json"  | jq -r '.value')
+          jwtd() {
+            if [[ -x $(command -v jq) ]]; then
+                jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "${1}" > jwt_claims.json
+                cat jwt_claims.json
+                echo ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL}} 
+            fi
+          }
+          jwtd $IDTOKEN
