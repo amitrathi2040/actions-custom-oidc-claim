@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   print-oidc-token:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: testing
     steps:
          
